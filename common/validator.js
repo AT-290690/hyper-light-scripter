@@ -3,8 +3,6 @@ const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const { randomBytes } = require('crypto');
 
-// const createUniqueHash = () => nanoid();
-
 const cookieRecepie = () => nanoid() + '.' + randomBytes(20).toString('hex');
 class CookieJar {
   #cookies = new Map();
@@ -48,44 +46,6 @@ exports.sanitizeId = hash => {
   }
 };
 
-// exports.registerUser = async (userId, pass) => {
-//   const secret = process.env.SECRET;
-//   const uniqueHash = nanoid();
-//   const hashedSecret = (await bcrypt.hash(userId + uniqueHash, 5))
-//     .split('.')
-//     .join('_');
-//   const hash = await bcrypt.hash(secret + pass + hashedSecret, 8);
-
-//   const user = await mongoPortals.findOneFromPortals({ name: userId });
-//   if (!user) {
-//     mongoPortals.registerPortal({
-//       name: userId,
-//       hash
-//     });
-//     return {
-//       public: userId,
-//       private: hashedSecret
-//     };
-//   }
-// };
-// exports.loginUser = async (id, hashedSecret, pass) => {
-//   const secret = process.env.SECRET;
-//   const user = await mongoPortals.findOneFromPortals({ name: id });
-//   if (!user?.hash) {
-//     return {
-//       success: 0
-//     };
-//   }
-//   const isValid = await bcrypt.compare(secret + pass + hashedSecret, user.hash);
-//   if (isValid) {
-//     return {
-//       success: 1
-//     };
-//   } else {
-//     return { success: 0 };
-//   }
-// };
-
 exports.registerUser = async (userId, pass) => {
   const secret = process.env.SECRET;
   const hash = await bcrypt.hash(secret + pass, 8);
@@ -128,5 +88,4 @@ exports.isCredentialValid = (cookie, portal, value) => {
 
 exports.cookieJar = cookieJar;
 exports.cookieRecepie = cookieRecepie;
-// exports.createUniqueHash = createUniqueHash;
 exports.isValidHash = isValidHash;

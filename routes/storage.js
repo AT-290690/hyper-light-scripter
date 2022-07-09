@@ -12,7 +12,6 @@ const {
   pushSnippet,
   disconnect,
   zipFolder,
-  update,
   checkout,
   register,
   login,
@@ -40,7 +39,6 @@ const storage = async route => {
   route.post('/register', register);
   route.post('/login', login);
   route.post('/logout', logout);
-  route.post('/update', update);
   route.post('/zip', zipFolder);
   route.post('/check', checkout);
   route.get('/temp', buildTempApp);

@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const { Readable } = require('stream');
-// const { minify } = require('terser');
 const {
   isCredentialValid,
   registerUser,
@@ -786,25 +785,4 @@ exports.disconnect = async (req, res) => {
       }
     );
   }
-};
-
-exports.update = async (req, res) => {
-  if (req.body.password !== process.env.PASSWORD)
-    return res.code(403).send({ message: 'wrong password' });
-  // await initQuine(
-  //   [
-  //     '>_run',
-  //     '>_exec',
-  //     '>_themes',
-  //     '>_editor',
-  //     '>_index',
-  //     '>_common',
-  //     '>_style'
-  //   ],
-  //   'legacy'
-  // );
-
-  await initQuine(['>_entry_jNnqZ8udEW0lrl2dvpevs'], 'entry');
-  console.log('Quine updated!');
-  return res.code(200).send({ message: 'Quine updated!' });
 };
