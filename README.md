@@ -1,2 +1,2 @@
 # hyper-light-scripter
-JavaScript cloud editor
+HTML cloud editor
