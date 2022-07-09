@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"
+    />
+    <meta
+      name="description"
+      content="Fast and Lightweight HTML, JavaScript and CSS code editor in the Cloud"
+    />
+    <title>Hyper Light Scripter</title>
+    <style>
+      body {
+        background: 'black';
+      }
+    </style>
+    <link
+      href="./style.css"
+      rel="preload"
+      href="stylesheet.css"
+      as="style"
+      onload="this.rel='stylesheet'"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="../../../../assets/images/favicon.svg"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../../assets/images/favicon.png"
+    />
+  </head>
+  <body>
+    <div id="main-container"></div>
+    <!-- <script type="module" src="./editor.bundle.js" defer></script> -->
+    <script type="module" src="./main.js"></script>
+    <script src="../../libs/progressbar/progressbar.min.js"></script>
+    <script src="../../libs/diff/diff-match-patch.js"></script>
+    <script id="lzutf8" src="../../libs/compression/lzutf8.min.js"></script>
+    <script src="../../libs/formatter/beauty.js"></script>
+  </body>
+</html>
