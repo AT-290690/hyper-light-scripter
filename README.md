@@ -11,7 +11,7 @@ replace DB uri with your Mongo Db uri https://www.mongodb.com/cloud/atlas/regist
 to whitelist external sources - edit security-policy
 
 ```
-yarn add
+yarn
 node index.js
 ```
 
