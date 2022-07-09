@@ -1490,29 +1490,6 @@ ${line}`;
           this.elements.consoleInputField.select();
         }
         break;
-      case 'UPDATE':
-        this.changeMode('text/plain');
-        this.editor.setValue(`Enter the admin password`);
-        this.elements.consoleInputField.setAttribute('type', 'password');
-        this.elements.consoleInputField.value = '';
-        this.NEXT_CMD = 'ENTER_ADMIN_PASSWORD';
-        break;
-      case 'ENTER_ADMIN_PASSWORD':
-        {
-          this.elements.consoleInputField.setAttribute('type', 'text');
-          const password = input[0];
-          fetch(`${API}/${this.selectedStorage}/update`, {
-            method: 'POST',
-            headers: {
-              credentials: 'same-origin',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ password })
-          })
-            .then(() => location.reload())
-            .catch(error => this.log('wrong password', 'error'));
-        }
-        break;
       case '//':
         if (!this.codeSelection) {
           const rest = input.join(' ');
