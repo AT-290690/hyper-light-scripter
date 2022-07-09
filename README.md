@@ -15,4 +15,4 @@ yarn
 node index.js
 ```
 
-Recommending a heroku deployment https://devcenter.heroku.com/articles/deploying-nodejs
+Recommending a heroku deployment https://devcenter.heroku.com/articles/deploying-nodejs#deploy-your-application-to-heroku
