@@ -20,6 +20,8 @@ class StorageProvider {
 export class Interface {
   constructor(element, options) {
     this.options = options;
+    this.margin = { x: 2, y: 77 };
+    this.progressBarBottom = 35;
     this.editor = CodeMirror(element, this.options);
     this.beautifySettings = {
       js: {
@@ -124,7 +126,7 @@ export class Interface {
         width: '100%',
         height: this.progressBarUtils.height + 'px',
         position: 'absolute',
-        bottom: '35px',
+        bottom: this.progressBarBottom + 'px',
         left: 0,
         zIndex: 4
       }
@@ -143,7 +145,7 @@ export class Interface {
         width: '100%',
         height: this.progressBarUtils.height + 'px',
         position: 'absolute',
-        bottom: '35px',
+        bottom: this.progressBarBottom + 'px',
         left: 0,
         zIndex: 4
       }
@@ -164,7 +166,7 @@ export class Interface {
           height: this.progressBarUtils.height + 'px',
           position: 'absolute',
           left: 0,
-          bottom: '35px',
+          bottom: this.progressBarBottom + 'px',
           zIndex: 4
         }
       });

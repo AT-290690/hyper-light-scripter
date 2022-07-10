@@ -129,6 +129,26 @@ export default instance => {
             .catch(err => this.log(err.message, 'error', err.status));
         }
         break;
+      case 'FOCUS':
+        this.FSM_lock();
+        this.margin.y = 35;
+        this.progressBarBottom = 30;
+        this.elements.interfaceContainer.style.visibility = 'hidden';
+        this.elements.interfaceContainer.style.position = 'absolute';
+        this.elements.interfaceContainer.style.top = -35;
+        this.responsiveResize();
+        this.FSM_unlock();
+        break;
+      case 'UNFOCUS':
+        this.FSM_lock();
+        this.margin.y = 77;
+        this.progressBarBottom = 35;
+        this.elements.interfaceContainer.style.position = 'static';
+        this.elements.interfaceContainer.style.top = 0;
+        this.elements.interfaceContainer.style.visibility = 'visible';
+        this.responsiveResize();
+        this.FSM_unlock();
+        break;
       case 'RUN':
         {
           this.elements.appWindow.src = '';
@@ -322,8 +342,9 @@ export default instance => {
       case 'OPEN':
       case '-':
         {
-          if (!input?.[0]) return this.log('Missing file to open!', 'error');
-          this.selectFile(input[0]);
+          const file = input?.[0]?.trim();
+          if (!file) return this.log('Missing file to open!', 'error');
+          this.selectFile(file);
         }
         break;
       case 'PFX_PREP':
@@ -335,6 +356,7 @@ export default instance => {
             .join('\n')
         );
         break;
+
       case 'PREP':
         this.elements.consoleInputField.value = input.join(' ');
         this.elements.consoleInputField.focus();

@@ -15,7 +15,6 @@ export const QUINE = !isIncognito
     ? '_quine_' + href[href.length - 2]
     : ''
   : '_incognito_' + currentIncognitoCount;
-export const margin = { x: 2, y: 77 };
 
 const UI = {
   parent: document.body,

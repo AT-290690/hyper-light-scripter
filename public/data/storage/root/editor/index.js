@@ -1,14 +1,9 @@
 import { Interface } from './editor.js';
-import { margin, UI } from './common.js';
+import { UI } from './common.js';
 export default (
   container,
   addons = [],
-  relativeTo = () => [
-    window.innerWidth,
-    window.innerHeight,
-    margin.x,
-    margin.y
-  ],
+  relativeTo = () => [window.innerWidth, window.innerHeight],
   storageProvider = window.localStorage
 ) => {
   UI.setParent(container);
@@ -44,11 +39,11 @@ export default (
   addons.map(addon => addon(Code));
   Code.StorageProvider = storageProvider;
   Code.resizerX(resizerElement, e => Code.resizeX(e.pageX));
-  const responsiveResize = () => {
-    const [WIDTH, HEIGHT, WIDHT_OFFSET, HEIGHT_OFFSET] = relativeTo();
-    Code.setSize(WIDTH - WIDHT_OFFSET, HEIGHT - HEIGHT_OFFSET);
+  Code.responsiveResize = () => {
+    const [WIDTH, HEIGHT] = relativeTo();
+    Code.setSize(WIDTH - Code.margin.x, HEIGHT - Code.margin.y);
     resizerElement.style.left = WIDTH + 'px';
-    appWindow.style.height = HEIGHT - HEIGHT_OFFSET + 'px';
+    appWindow.style.height = HEIGHT - Code.margin.y + 'px';
     Code.initialResize = WIDTH / 2;
     if (Code.isAppOpened) {
       Code.resizeX(Code.mobileAppWindowSize());
@@ -58,6 +53,7 @@ export default (
   const interfaceContainer = UI.create('div', toolsContainer, {
     class: 'interafaceContainer'
   });
+
   // const indexButton = UI.create('button', interfaceContainer, {
   //   class: 'svgIcon',
   //   title: 'Manual'
@@ -277,7 +273,7 @@ OR continue with TEMPORARY_SESSION
   });
 
   Code.startup();
-  window.addEventListener('resize', responsiveResize);
+  window.addEventListener('resize', Code.responsiveResize);
   //screen.orientation.addEventListener('change', responsiveResize);
-  responsiveResize();
+  Code.responsiveResize();
 };
