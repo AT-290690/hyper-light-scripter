@@ -138,15 +138,11 @@ export default (
         }
         Code.CMD_HISTORY_POINTER = Code.CMD_HISTORY_POINTER + dir;
       }
-    } else if (e.key.toLowerCase() === 'q' && (e.ctrlKey || e.metaKey)) {
+    } else if (e.ctrlKey && e.getModifierState('CapsLock')) {
       e = e || window.event;
       e.preventDefault();
       e.stopPropagation();
-      if (Code.getFileType() !== 'js') {
-        Code.execLabel();
-      } else {
-        document.getElementById('currentRunButton').click();
-      }
+      Code.execLabel();
     } else if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
       e = e || window.event;
       e.preventDefault();
