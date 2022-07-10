@@ -352,6 +352,7 @@ export class Interface {
       case 'html':
         return html_beautify(value, settings);
       case 'js':
+      case 'jsx':
         return js_beautify(value, settings);
       case 'css':
         return css_beautify(value, settings);
@@ -661,6 +662,9 @@ export class Interface {
         this.editor.changeMode('css');
       } else if (type === 'js') {
         this.editor.changeMode('javascript');
+        // this.editor.setOption('lint', { esversion: 12 });
+      } else if (type === 'jsx') {
+        this.editor.changeMode('jsx');
         // this.editor.setOption('lint', { esversion: 12 });
       } else {
         this.editor.changeMode('txt');
