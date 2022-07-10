@@ -109,7 +109,7 @@ export default (
   const topPanelContainer = UI.create('div');
   document.addEventListener('keydown', e => {
     const activeElement = document.activeElement;
-    if (e.ctrlKey && e.key === 'Shift') {
+    if (e.altKey && e.getModifierState('CapsLock')) {
       if (activeElement === consoleInputField) {
         e.preventDefault();
         Code.editor.focus();
