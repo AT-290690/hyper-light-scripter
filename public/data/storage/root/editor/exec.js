@@ -1,4 +1,5 @@
 import { API, QUINE } from './common.js';
+import editor from './index.js';
 export default instance => {
   instance.FSM_DELAY = 50;
   instance.CMD_HISTORY = [];
@@ -83,6 +84,9 @@ export default instance => {
   selecting a word starting with ... and pressing enter pastes it in the editor by clearing it first
   
  */`);
+        break;
+      case 'PORTAL':
+        this.editor.replaceSelection(this.userId);
         break;
       case 'DROP':
         const name = input[0]?.trim();
@@ -779,6 +783,18 @@ export default instance => {
         this.tempFiles.add('/package.zip');
         this.clearFileOptions();
         this.createFileSelect();
+        break;
+      case 'SHARE_FOLDER':
+      case 'SHARE_PORTAL':
+        {
+          let out = '';
+          let sub = input[0]?.trim() ?? '';
+          this.tempFiles.forEach(
+            file => (out += `LOAD ${this.userId} ${file} IN ${sub}${file}\n`)
+          );
+
+          this.editor.setValue(out);
+        }
         break;
       case 'FROM_FOLDER':
         {
