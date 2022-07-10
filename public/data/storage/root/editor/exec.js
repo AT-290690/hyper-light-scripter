@@ -153,6 +153,7 @@ export default instance => {
         this.responsiveResize();
         this.FSM_unlock();
         break;
+
       case 'RUN':
         {
           this.elements.appWindow.src = '';

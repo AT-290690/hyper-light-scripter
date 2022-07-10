@@ -56,6 +56,202 @@ export default instance => {
       .filter(Boolean);
     return instance.exec('EXEC');
   };
+  instance.debugLabel = (parent, callback = s => JSON.stringify(s)) => {
+    if (instance.unsaved === true) {
+      return instance.log('Save file first.');
+    } else if (instance.lockedLogger) return;
+    clearInterval(instance._timeout['evalJS']);
+    const selection = instance.editor.getSelection();
+    if (selection) {
+      instance.run_retries_count = 1;
+      const retryWith = (prefix = '') => {
+        globalThis.__errorEvalJS = null;
+        globalThis.__resultEvalJS = [];
+        const lines = selection.split('\n').filter(Boolean);
+        const lastLine = lines[lines.length - 1];
+        lines[lines.length - 1] =
+          lastLine[lastLine.length - 1] === ';'
+            ? lastLine.substr(0, lastLine.length - 1)
+            : lastLine;
+        if (lines.length > 1) {
+          lines[0] =
+            'globalThis.parent.__evalJSFN(()=>{try{' +
+            (lines[0].includes('return')
+              ? lines[0]
+              : 'return ' + lines[0].replace('return', ''));
+          lines[lines.length - 1] =
+            lines[lines.length - 1] +
+            '}catch(err){globalThis.parent.__errorEvalJS = err.message}})';
+        } else {
+          lines[0] =
+            'globalThis.parent.__evalJSFN(()=>{try{' +
+            (lines[0].includes('return')
+              ? lines[0]
+              : 'return ' + lines[0].replace('return', '')) +
+            '}catch(err){globalThis.parent.__errorEvalJS = err.message}})';
+        }
+        // if(globalThis.parent.__resultEvalJS.length <= ${
+        //   instance.logLineCap
+        // })
+        // const transformerLogic = `typeof sel === 'object' ? JSON.parse(JSON.stringify(sel)) : sel`;
+        const transform = 'sel';
+        const format = `JSON.parse(JSON.stringify(${transform}))`;
+        const transformerFn = `(sel)=>{globalThis.parent.__resultEvalJS.push(${format}); return sel}`;
+        const resultSelection = `${prefix}globalThis.parent.__evalJSFN(${transformerFn}, ${lines.join(
+          '\n'
+        )})`;
+        const start = instance.editor.offsetToPos(instance.lastSelection.from);
+        const end = instance.editor.offsetToPos(instance.lastSelection.to);
+        // Edge case if you are at the end of the doc - I need this last line to get last char
+        if (end.line + 1 >= instance.editor.lineCount()) {
+          instance.editor.addValue('\n');
+        }
+        const startOffset = instance.editor.posToOffset({
+          line: start.line,
+          ch: 0
+        });
+        const endOffset = instance.editor.posToOffset({
+          line: end.line + 1,
+          ch: -1
+        });
+        const range = instance.editor.getRange(startOffset, endOffset);
+        let part1 = '';
+        let part2 = '';
+        for (let i = 0; i < range.length; i++) {
+          if (i < start.ch) {
+            part1 += range[i];
+          } else if (i >= end.ch) {
+            part2 += range[i];
+          }
+        }
+        if (!part1.trim()) {
+          part1 = '';
+        }
+        if (!part2.trim()) {
+          part2 = '';
+        }
+        const result = part1 + resultSelection + part2;
+        instance.unsaved = false;
+        clearInterval(instance._timeout['evalJS']);
+        instance.reloadCount = 0;
+        instance.saveChangedLine(
+          result.split('\n'),
+          start.line,
+          end.line,
+          'inline',
+          () => {
+            if (instance.lockedLogger) return;
+            instance.lockedLogger = true;
+            clearInterval(instance._timeout['evalJS']);
+            instance.runCode();
+            instance._timeout['evalJS'] = setInterval(() => {
+              instance.reloadCount++;
+              const iframeDoc =
+                instance.elements.appWindow.contentDocument ||
+                instance.elements.appWindow.contentWindow.document;
+              if (iframeDoc.readyState === 'complete') {
+                const lintErrors = instance.getLintErrors();
+                if (lintErrors.length)
+                  globalThis['__errorEvalJS'] = 'There are errors in the code.';
+                if (
+                  lintErrors ||
+                  globalThis['__errorEvalJS'] ||
+                  globalThis['__resultEvalJS']?.length
+                ) {
+                  if (globalThis.__errorEvalJS) {
+                    [...document.getElementsByClassName('log_line')].map(x =>
+                      x.parentNode.removeChild(x)
+                    );
+                    instance.logLine(
+                      globalThis.__errorEvalJS,
+                      'error_line',
+                      parent
+                      // {
+                      //   x: 80,
+                      //   y: 0
+                      // }
+                    );
+                    globalThis.__errorEvalJS = null;
+                    globalThis.__resultEvalJS = [];
+                    instance.lockedLogger = false;
+                  } else if (
+                    !globalThis.__errorEvalJS &&
+                    globalThis.__resultEvalJS
+                  ) {
+                    if (globalThis.__resultEvalJS.length > 1) {
+                      const lines = globalThis.__resultEvalJS
+                        .map(line => JSON.stringify(line))
+                        .join('\n');
+                      instance.logLine(
+                        lines,
+                        'log_line',
+                        parent
+                        // {
+                        //   x: 80,
+                        //   y: 0
+                        // }
+                      );
+                    } else {
+                      globalThis.__resultEvalJS.length === 0
+                        ? instance.logLine(
+                            'Unreachable code!',
+                            'info_line',
+                            parent
+                          )
+                        : instance.logLine(
+                            callback(globalThis.__resultEvalJS[0]),
+                            'log_line',
+                            parent
+                            // { x: 80, y: 0 }
+                          );
+                    }
+                    globalThis.__resultEvalJS = [];
+                  }
+                  instance.reloadCount = 0;
+                  clearInterval(instance._timeout['evalJS']);
+                  instance.restoreSavedChangedLine();
+                } else {
+                  if (instance.reloadCount >= instance.reloadLimit) {
+                    clearInterval(instance._timeout['evalJS']);
+                    instance.restoreSavedChangedLine();
+                    if (
+                      globalThis.__resultEvalJS.length === 0 &&
+                      instance.run_retries_count === 1
+                    ) {
+                      instance.run_retries_count = 0;
+                      //  return retryWith(';');
+                    }
+                    globalThis.__resultEvalJS.length === 0
+                      ? instance.logLine(
+                          'Unreachable code!',
+                          'info_line',
+                          parent
+                        )
+                      : instance.logLine(
+                          callback(globalThis.__resultEvalJS[0]),
+                          'log_line',
+                          parent
+                          // { x: 80, y: 0 }
+                        );
+                    instance.run_retries_count = 0;
+                    instance.reloadCount = 0;
+                  }
+                }
+              }
+            }, instance.logThrotInterval);
+          }
+        );
+      };
+      if (instance.run_retries_count === 1) {
+        retryWith();
+      }
+    } else {
+      [...document.getElementsByClassName('log_line')].map(x =>
+        x.parentNode.removeChild(x)
+      );
+      instance.lockedLogger = false;
+    }
+  };
   instance.getLintErrors = () => {
     const errors = instance.editor.getLintState();
     if (errors && errors.diagnostics.size) {

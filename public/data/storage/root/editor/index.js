@@ -13,13 +13,13 @@ export default (
   UI.setParent(appContainer);
   const appWindow = UI.create('iframe', { class: 'app_window' });
   const Code = new Interface(UI.parent, {
-    onExec: () => Code.execLabel(),
-    onRun: e => {
-      if (e.target) {
-        Code.unsaved = false;
-        Code.debugLabel(e.target);
-      }
-    },
+    // onExec: () => Code.execLabel(),
+    // onRun: e => {
+    //   if (e.target) {
+    //     Code.unsaved = false;
+    //     Code.debugLabel(e.target);
+    //   }
+    // },
     onUpdate: update => {
       if (update.selectionSet) {
         const selection = update.state.selection.ranges[0];
@@ -138,7 +138,11 @@ export default (
       e = e || window.event;
       e.preventDefault();
       e.stopPropagation();
-      Code.execLabel();
+      if (Code.getFileType() === 'js') {
+        Code.debugLabel(UI.parent);
+      } else {
+        Code.execLabel();
+      }
     } else if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
       e = e || window.event;
       e.preventDefault();
