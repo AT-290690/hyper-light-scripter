@@ -109,7 +109,7 @@ export default (
   const topPanelContainer = UI.create('div');
   document.addEventListener('keydown', e => {
     const activeElement = document.activeElement;
-    if (e.key === 'Escape') {
+    if (e.ctrlKey && e.key === 'Shift') {
       if (activeElement === consoleInputField) {
         e.preventDefault();
         Code.editor.focus();
