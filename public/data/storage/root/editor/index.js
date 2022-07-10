@@ -145,6 +145,7 @@ export default (
       e.stopPropagation();
       Code.saveFile();
       if (Code.isAppOpened) Code.onLoadCallback(() => Code.runCode());
+      if (Code.appPopWindow) Code.exec('OPENAPP');
     }
   });
   window.addEventListener(

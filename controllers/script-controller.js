@@ -242,7 +242,7 @@ exports.buildTempApp = async (req, res) => {
     <img title="Wake up!" style="cursor:pointer;display:none;fill:var(--comment)" onClick="wakeUp()" id="vanished"  src="../../../../assets/images/app-sleeping.svg" width="100%" height="150vh" />
     </div>
     <h1 class="title">${script}</h1>
-    <div  class="description" style="font-size:10px"><p>by <a href="${
+    <div  class="description" style="font-size:10px"><p>powered by <a href="${
       process.env.API
     }/data/storage/root/editor/?script=${script}">Hyper Light Scripter</a></p></div> 
       <p class="description" style="font-size:14px;" id="info">This script is awake!</p>

@@ -682,6 +682,12 @@ export default instance => {
       case 'R':
         this.OpenExternalResource('app');
         break;
+      case 'CLOSEAPP':
+        if (this.appPopWindow) {
+          this.appPopWindow.close();
+          this.appPopWindow = null;
+        }
+        break;
       case 'EXE':
         {
           if (this.tempFiles.size === 0) {

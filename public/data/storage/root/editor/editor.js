@@ -54,6 +54,7 @@ export class Interface {
     this.fileCache = new Map();
     this.fileModes = new Map();
     this.isAppOpened = false;
+    this.appPopWindow = null;
     this.initialResize = window.innerWidth;
     this.width = 0;
     this.height = 0;
@@ -561,6 +562,7 @@ export class Interface {
   }
   OpenExternalResource(resource, search) {
     let link;
+    this.appPopWindow = null;
     switch (resource) {
       case 'mdn':
         link = `https://developer.mozilla.org/en-US/search?q=${search}`;
@@ -571,8 +573,10 @@ export class Interface {
       case 'app':
         link = `${API}/data/${this.selectedStorage}/portals/${this.userId}/${this.index}`;
         break;
+      default:
+        return;
     }
-    window.open(
+    this.appPopWindow = window.open(
       link,
       'External Resource',
       `toolbar=no,width=600,height=${this.height},left=1300,top=150,status=no,scrollbars=no,resize=no`
