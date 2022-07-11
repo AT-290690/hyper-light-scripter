@@ -62,7 +62,7 @@ export default instance => {
     } else if (instance.lockedLogger) return;
     clearInterval(instance._timeout['evalJS']);
     const selection = instance.editor.getSelection();
-    if (selection) {
+    if (selection.trim()) {
       instance.run_retries_count = 1;
       const retryWith = (prefix = '') => {
         globalThis.__errorEvalJS = null;
@@ -100,8 +100,15 @@ export default instance => {
         const resultSelection = `${prefix}globalThis.parent.__evalJSFN(${transformerFn}, ${lines.join(
           '\n'
         )})`;
+
         const start = instance.editor.offsetToPos(instance.lastSelection.from);
         const end = instance.editor.offsetToPos(instance.lastSelection.to);
+
+        if (start.line !== end.line && start.ch + end.ch !== selection.length) {
+          end.ch = selection.length;
+          end.line = end.line - 1;
+        }
+
         // Edge case if you are at the end of the doc - I need this last line to get last char
         if (end.line + 1 >= instance.editor.lineCount()) {
           instance.editor.addValue('\n');
@@ -114,9 +121,11 @@ export default instance => {
           line: end.line + 1,
           ch: -1
         });
-        const range = instance.editor.getRange(startOffset, endOffset);
+        const range = instance.editor.getRange(startOffset, endOffset).trim();
+
         let part1 = '';
         let part2 = '';
+
         for (let i = 0; i < range.length; i++) {
           if (i < start.ch) {
             part1 += range[i];
@@ -124,6 +133,7 @@ export default instance => {
             part2 += range[i];
           }
         }
+
         if (!part1.trim()) {
           part1 = '';
         }
@@ -134,8 +144,9 @@ export default instance => {
         instance.unsaved = false;
         clearInterval(instance._timeout['evalJS']);
         instance.reloadCount = 0;
+        const resultLines = result.split('\n');
         instance.saveChangedLine(
-          result.split('\n'),
+          resultLines,
           start.line,
           end.line,
           'inline',
