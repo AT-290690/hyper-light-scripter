@@ -6,9 +6,13 @@ create a .env file in root
 
 copy env.dist content into .env
 
+create a script-policy.js file in root
+
+copy script-policy.js.dist content into script-policy.js or define your own policy 
+* this is a whitelist for external sources (helmet headers config file)
+
 replace DB uri with your Mongo Db uri https://www.mongodb.com/cloud/atlas/register
 
-to whitelist external sources - edit security-policy
 
 ```
 yarn
