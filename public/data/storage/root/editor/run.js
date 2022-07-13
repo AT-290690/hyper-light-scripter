@@ -90,13 +90,13 @@ export default instance => {
               : 'return ' + lines[0].replace('return', '')) +
             '}catch(err){globalThis.parent.__errorEvalJS = err.message}})';
         }
+
         // if(globalThis.parent.__resultEvalJS.length <= ${
         //   instance.logLineCap
         // })
         // const transformerLogic = `typeof sel === 'object' ? JSON.parse(JSON.stringify(sel)) : sel`;
         const transform = 'sel';
-        const format = `JSON.parse(JSON.stringify(${transform}))`;
-        const transformerFn = `(sel)=>{globalThis.parent.__resultEvalJS.push(${format}); return sel}`;
+        const transformerFn = `(sel)=>{globalThis.parent.__resultEvalJS.push(${transform}); return sel}`;
         const resultSelection = `${prefix}globalThis.parent.__evalJSFN(${transformerFn}, ${lines.join(
           '\n'
         )})`;
@@ -121,7 +121,7 @@ export default instance => {
           line: end.line + 1,
           ch: -1
         });
-        const range = instance.editor.getRange(startOffset, endOffset).trim();
+        const range = instance.editor.getRange(startOffset, endOffset);
 
         let part1 = '';
         let part2 = '';
