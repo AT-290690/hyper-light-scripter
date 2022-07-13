@@ -20,3 +20,6 @@ node index.js
 ```
 
 Recommending a heroku deployment https://devcenter.heroku.com/articles/deploying-nodejs#deploy-your-application-to-heroku
+
+
+Doc on how to use the editor: hyper-light-scripter.herokuapp.com/data/storage/root/entry/
