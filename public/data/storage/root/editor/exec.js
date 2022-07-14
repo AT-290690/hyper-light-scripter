@@ -1,5 +1,4 @@
 import { API, QUINE } from './common.js';
-import editor from './index.js';
 export default instance => {
   instance.FSM_DELAY = 50;
   instance.CMD_HISTORY = [];
@@ -84,6 +83,18 @@ export default instance => {
   selecting a word starting with ... and pressing enter pastes it in the editor by clearing it first
   
  */`);
+        break;
+      case 'URL':
+        this.editor.replaceSelection(API);
+        break;
+      case 'DATA':
+        this.editor.replaceSelection('/data/storage/');
+        break;
+      case 'PORTALS':
+        this.editor.replaceSelection('/data/storage/portals/');
+        break;
+      case 'ROOT':
+        this.editor.replaceSelection('/data/storage/root/');
         break;
       case 'PORTAL':
         this.editor.replaceSelection(this.userId);

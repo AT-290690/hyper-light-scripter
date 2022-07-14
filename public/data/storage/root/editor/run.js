@@ -52,6 +52,8 @@ export default instance => {
   instance.execLabel = () => {
     instance.tempExecVariables['exec_history'] = instance.editor
       .getSelection()
+      .split('|\n')
+      .join(' ')
       .split('\n')
       .filter(Boolean);
     return instance.exec('EXEC');
