@@ -249,13 +249,7 @@ BUILDS . 0 10
 **************
 ARCHIVE . 0
 **************`
-      : `YOU ARE NOT SIGNED IN / SESSION HAS EXPIRED
-
-LOGIN
-REGISTER
-
-OR continue with TEMPORARY_SESSION
-(no ownership of your scripts)`;
+      : Code.NOT_LOGGED_IN_MESSAGE;
     Code.editor.setValue(content);
     Code.changeMode('text/plain');
   });

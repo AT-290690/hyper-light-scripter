@@ -23,6 +23,7 @@ export class Interface {
     this.margin = { x: 2, y: 77 };
     this.progressBarBottom = 35;
     this.editor = CodeMirror(element, this.options);
+
     this.beautifySettings = {
       js: {
         indent_size: '2',
@@ -133,6 +134,13 @@ export class Interface {
       }
     });
     this.MAXIMUM_CACHE_SIZE = 10;
+    this.NOT_LOGGED_IN_MESSAGE = `YOU ARE NOT SIGNED IN / SESSION HAS EXPIRED
+
+    LOGIN MY_PUBLIC_KEY
+    REGISTER
+    
+    OR continue with TEMPORARY_SESSION
+    (no ownership of your scripts)`;
   }
   animateProgressStart(time) {
     this?.progressBar?.destroy();

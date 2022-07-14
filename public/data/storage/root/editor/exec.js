@@ -22,6 +22,18 @@ export default instance => {
       this.exec(CMD + ' ' + this.elements.consoleInputField.value.trim());
       return;
     }
+
+    if (
+      instance.temporal &&
+      !standartInput.includes('EXEC') &&
+      this.elements.consoleInputField.type !== 'password' &&
+      !standartInput.includes('LOGIN') &&
+      !standartInput.includes('REGISTER') &&
+      !standartInput.includes('TEMPORARY_SESSION')
+    ) {
+      instance.selectedFile = 'README.md';
+      return instance.editor.setValue(instance.NOT_LOGGED_IN_MESSAGE);
+    }
     this.CMD_HISTORY.push(standartInput);
     this.CMD_HISTORY_POINTER++;
     const input = standartInput
@@ -204,6 +216,8 @@ export default instance => {
           }).then(() => {
             this.StorageProvider.removeItem('hyper_light_scripter_id' + QUINE);
             this.userId = null;
+            instance.temporal = true;
+            instance.elements.getKeyButton.classList.add('shake');
             // this.reload(() => {
             //   this.log(`Logout successful!`);
             // });
@@ -271,8 +285,9 @@ export default instance => {
             .catch(err => this.log(err.message, 'error', err.status));
         }
         break;
+      case 'SIGN':
       case 'LOGIN':
-        this.tempExecVariables['new_username'] = input[0].trim();
+        this.tempExecVariables['new_username'] = input[0]?.trim();
         this.tempExecVariables['old_username'] = this.userId;
         this.editor.setValue(`Enter your password in the console`);
         this.elements.consoleInputField.value = '';
@@ -321,12 +336,15 @@ export default instance => {
                 this.StorageProvider.removeItem(
                   'hyper_light_scripter_temp' + QUINE
                 );
-                this.startup();
+                instance.temporal = true;
+                instance.userId = null;
+                instance.elements.getKeyButton.classList.add('shake');
+                //this.startup();
               }
               return res.json();
             })
             .then(res => this.log(res.message))
-            .catch(err => this.log(err.message, 'error', err.status))
+            .catch(err => instance.log(err.message, 'error', err.status))
             .finally(() => {
               this.editor.setValue('');
               this.CMD_HISTORY = [];
