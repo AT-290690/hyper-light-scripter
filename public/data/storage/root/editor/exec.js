@@ -86,9 +86,6 @@ export default instance => {
  RUN - runs code ignoring lint erros
  DEBUG - runs code and if there are any runtime errors it displays them
  
- // - creates a comment from selection or input
- / remove a comment from selection
- 
   writting nothing and pressing enter runs the code if no lint erros are found
   selecting a word staring with >>> and pressing enter in a blank text runs it as executable
   selecting a word starting with >_ and pressing enter creates a script
@@ -1564,31 +1561,22 @@ ${line}`;
           this.elements.consoleInputField.select();
         }
         break;
-      case '//':
-        if (!this.codeSelection) {
-          const rest = input.join(' ');
-          this.editor.addValue(`\n/* ${rest} */`);
-        } else {
-          this.editor.replaceSelection(`/* ${this.codeSelection} */`);
-        }
-        break;
-      case '/':
-        if (
-          (this.codeSelection && this.codeSelection.includes('//')) ||
-          this.codeSelection.includes('/*')
-        ) {
-          this.editor.replaceSelection(
-            this.codeSelection
-              .replaceAll('/* ', '')
-              .replaceAll(' */', '')
-              .replaceAll('//', '')
-          );
-        } else {
-          this.log('No code selected', 'error');
-        }
-        break;
       case 'DEBUG':
         this.debug();
+        break;
+      case 'LINT':
+        {
+          const inp = input[0]?.trim()?.toUpperCase();
+          if (inp === 'OFF') {
+            instance.options.lint = false;
+            instance.editor.switchInstance({
+              ...instance.options,
+              doc: instance.editor.getValue(),
+              callback: () => instance.changeMode(instance.selectedFile)
+            });
+          } else if (inp === 'ON') instance.debug();
+          else instance.log('Provide a lint option on/off');
+        }
         break;
       case 'BEAUTIFY':
         {
