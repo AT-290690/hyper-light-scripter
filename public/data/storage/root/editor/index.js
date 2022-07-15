@@ -81,7 +81,10 @@ export default (
     class: 'svgIcon',
     title: 'Bugs'
   });
-
+  const execButton = UI.create('button', interfaceContainer, {
+    class: 'svgIcon',
+    title: 'Execute'
+  });
   const saveButton = UI.create('button', interfaceContainer, {
     class: 'svgIcon',
     title: 'Save file'
@@ -102,29 +105,53 @@ export default (
   //   class: 'svgIcon executeButton',
   //   title: 'Execute'
   // });
+
+  //  if (e.ctrlKey && e.getModifierState('CapsLock')) {
+  //   e = e || window.event;
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   if (Code.getFileType() === 'js') {
+  //     Code.debugLabel(UI.parent);
+  //   } else {
+  //     Code.execLabel();
+  //   }
+  // }
   const topPanelContainer = UI.create('div');
   document.addEventListener('keydown', e => {
     const activeElement = document.activeElement;
-    if (e.altKey && e.getModifierState('CapsLock')) {
-      if (activeElement === consoleInputField) {
+    // if (e.getModifierState('CapsLock') && activeElement === consoleInputField) {
+    //   e.preventDefault();
+    //   Code.editor.focus();
+    // } else if (
+    //   !e.getModifierState('CapsLock') &&
+    //   e.key === 'CapsLock' &&
+    //   activeElement !== consoleInputField
+    // ) {
+    //   consoleInputField.focus();
+    // } else if (e.key === 'Enter') {
+    //   if (activeElement === consoleInputField) {
+    //     Code?.exec(consoleInputField.value);
+    //     consoleInputField.value = '';
+    //   }
+    // } else
+
+    // if (e.key.toLowerCase() === 'f' && (e.ctrlKey || e.metaKey)) {
+    //   if (activeElement === consoleInputField) {
+    //     e.preventDefault();
+    //     Code.editor.focus();
+    //   }
+    // }
+    //(e.key === 'ArrowUp' || e.key === 'ArrowDown'
+    if (activeElement === consoleInputField) {
+      if (e.key === 'Enter') {
         e.preventDefault();
-        Code.editor.focus();
-      } else {
-        consoleInputField.focus();
-      }
-    } else if (e.key === 'Enter') {
-      if (activeElement === consoleInputField) {
         Code?.exec(consoleInputField.value);
         consoleInputField.value = '';
-      }
-    } else if (e.key.toLowerCase() === 'f' && (e.ctrlKey || e.metaKey)) {
-      if (activeElement === consoleInputField) {
+      } else if (e.altKey && e.key === 'ArrowUp') {
         e.preventDefault();
         Code.editor.focus();
-      }
-    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-      if (activeElement === consoleInputField) {
-        const dir = e.key === 'ArrowUp' ? -1 : e.key === 'ArrowDown' ? 1 : 0;
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const dir = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
         if (Code.CMD_HISTORY[Code.CMD_HISTORY_POINTER]) {
           consoleInputField.value = Code.CMD_HISTORY[Code.CMD_HISTORY_POINTER];
         } else if (Code.CMD_HISTORY_POINTER < 0) {
@@ -134,14 +161,12 @@ export default (
         }
         Code.CMD_HISTORY_POINTER = Code.CMD_HISTORY_POINTER + dir;
       }
-    } else if (e.ctrlKey && e.getModifierState('CapsLock')) {
-      e = e || window.event;
+    } else if (e.altKey && e.key === 'ArrowDown') {
       e.preventDefault();
-      e.stopPropagation();
-      if (Code.getFileType() === 'js') {
-        Code.debugLabel(UI.parent);
-      } else {
+      if (Code.editor.getSelection().length) {
         Code.execLabel();
+      } else {
+        consoleInputField.focus();
       }
     } else if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
       e = e || window.event;
@@ -214,6 +239,8 @@ export default (
 <path d="M27.6426 28.3467L34.1216 35.6533"></path>
 <path d="M30 29V13L23 7.50003H13L6.5 13V29L18 37L30 29Z"></path>
 </svg>`;
+  execButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"  stroke-width="2"  viewBox="0 0 20 30" version="1.1" width="18" height="18" version="1.1" ><defs></defs><g id="two-28" transform="matrix(1 0 0 1 0 0)" opacity="1"><g id="two-31" transform="matrix(1 0 0 1 -10 -5)" opacity="1"><path transform="matrix(1 0 0 1 22.5 17.5)" id="two-29" d="M -2.5 -7.5 L 2.5 -7.5 L 2.5 7.5 L -2.5 7.5 Z "  stroke-opacity="1" fill-opacity="1" visibility="visible" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"></path><path transform="matrix(1 0 0 1 17.5 27.5)" id="two-30" d="M -2.5 -7.5 L 2.5 -7.5 L 2.5 7.5 L -2.5 7.5 Z "  stroke-opacity="1" fill-opacity="1" visibility="visible" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"></path></g></g></svg>
+`;
   //   consoleButton.innerHTML = `<svg width="15" height="15" viewBox="0 0 18 18" transform="rotateZ(45)" xmlns="http://www.w3.org/2000/svg">
   //   <rect width="18" height="18" />
   // </svg>`;
@@ -266,6 +293,14 @@ ARCHIVE . 0
   //   if (Code.isAppOpened) Code.openAppWindow();
   //   Code.openAppWindow(`../../root/entry/index.html`);
   // });
+  execButton.addEventListener('click', () => {
+    if (Code.getFileType() === 'js') {
+      Code.debugLabel(UI.parent);
+    } else {
+      Code.execLabel();
+    }
+  });
+
   saveButton.addEventListener('click', e => {
     if (Code.isAppOpened) Code.onLoadCallback(() => Code.runCode());
     Code.saveFile();
