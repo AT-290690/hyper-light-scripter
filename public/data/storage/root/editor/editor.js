@@ -38,7 +38,7 @@ export class Interface {
         unescape_strings: false,
         jslint_happy: true,
         end_with_newline: false,
-        wrap_line_length: '64',
+        wrap_line_length: '128',
         indent_inner_html: false,
         comma_first: false,
         e4x: true,

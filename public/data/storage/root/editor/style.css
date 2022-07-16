@@ -346,10 +346,10 @@ body {
   display: inline-block;
 }
 
-.fileselect:focus {
+/* .fileselect:focus {
   border: dashed 2px var(--border);
   color: var(--color-primary);
-}
+} */
 
 .fileselect,
 .fileselected {

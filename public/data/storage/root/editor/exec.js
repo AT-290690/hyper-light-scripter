@@ -282,6 +282,22 @@ export default instance => {
             .catch(err => this.log(err.message, 'error', err.status));
         }
         break;
+      case 'QUICK_LOGIN':
+        {
+          instance.tempExecVariables['new_username'] = input[0]?.trim();
+          instance.tempExecVariables['old_username'] = this.userId;
+          const creds = input[1]?.trim();
+          if (creds) {
+            instance.exec(
+              'VALIDATE_PASSWORD ' +
+                LZUTF8.decompress(creds, {
+                  inputEncoding: 'Base64',
+                  outputEncoding: 'String'
+                })
+            );
+          }
+        }
+        break;
       case 'SIGN':
       case 'LOGIN':
         this.tempExecVariables['new_username'] = input[0]?.trim();
@@ -912,6 +928,10 @@ export default instance => {
           const file = this.correctFilePath(input[0]?.trim());
           if (file) this.downloadFile(file);
         }
+        break;
+      case 'PORTAL_OUTPUT':
+        this.saveFile(this.userId + (input[0]?.trim() ?? ''));
+        this.changeMode('.txt');
         break;
       case 'SAVE':
       case 'MAKE':
@@ -1583,7 +1603,7 @@ ${line}`;
           this.editor.setValue(this.beautify(this.editor.getValue()));
         }
         break;
-      case 'SWYPE':
+      case 'SWIPE':
         if (instance.runButton?.parentNode) {
           instance.runButton.parentNode.removeChild(instance.runButton);
           delete instance.runButton;
