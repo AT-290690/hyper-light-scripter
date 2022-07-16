@@ -164,7 +164,11 @@ export default (
     } else if (e.altKey && e.key === 'ArrowDown') {
       e.preventDefault();
       if (Code.editor.getSelection().length) {
-        Code.execLabel();
+        if (Code.getFileType() === 'js') {
+          Code.debugLabel(UI.parent);
+        } else {
+          Code.execLabel();
+        }
       } else {
         consoleInputField.focus();
       }
